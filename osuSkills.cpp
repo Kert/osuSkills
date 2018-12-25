@@ -19,110 +19,139 @@
 #include "strains.h"
 #include "tweakvars.h"
 
-namespace osuSkills
+bool PreprocessMap(Beatmap &beatmap)
 {
-	bool PreprocessMap(Beatmap &beatmap)
+	cout << "*** Preprocessing " << beatmap.name << "..." << endl;
+	if (beatmap.hitObjects.size() < 2)
 	{
-		if (beatmap.hitObjects.size() < 2)
-		{
-			cout << endl << beatmap.name << "The map has less than 2 hit objects!" << endl << endl;
-			return 0;
-		}
-		PrepareTimingPoints(beatmap);
-		ApproximateSliderPoints(beatmap);
-		BakeSliderData(beatmap);
-
-		PrepareAimData(beatmap);
-		PrepareTapData(beatmap);
-		if (beatmap.distances.size() == 0)
-			return 0;
-		return 1;
+		cout << endl << "The map has less than 2 hit objects!" << endl << endl;
+		return 0;
 	}
 
-	void CalculateSkills(Beatmap &beatmap)
-	{
-		CalculateReaction(beatmap, HasMod(beatmap, HD));
-		CalculateStamina(beatmap);
-		CalculateTenacity(beatmap);
-		bool agilityV2 = false;
-		if (agilityV2)
-			CalculateAgilityStrains(beatmap);  // calculates precision as well. Might seperate that later
-		else
-			CalculateAgility(beatmap);
-		CalculatePrecision(beatmap, HasMod(beatmap, HD));
-		CalculateAccuracy(beatmap);
-		if (HasMod(beatmap, FL))
-		{
-			CalculateMemory(beatmap);
-		}
-		CalculateReading(beatmap, HasMod(beatmap, HD));
-	}
+	PrepareTimingPoints(beatmap);
+	ApproximateSliderPoints(beatmap);
+	BakeSliderData(beatmap);
 
-	int ProcessFile(std::string filepath, int mods, Beatmap& beatmap)
-	{
-		std::ifstream beatmapFile(filepath);
-		if (beatmapFile.is_open())
-		{
-			if (!FileReader::ParseBeatmap(beatmapFile, beatmap))
-			{
-				cout << "\r*** Parsing... failed! " << filepath << endl << endl;
-				return 0;
-			}
-			beatmapFile.close();
-
-			if (mods != 0)
-				ApplyMods(beatmap, mods);
-
-			return PreprocessMap(beatmap);
-		}
-		else
-		{
-			cout << "Can't open " << filepath << endl;
-			return 0;
-		}
-	}
-
-	extern "C" __declspec(dllexport) int ReloadFormulaVars()
-	{
-		LoadFormulaVars();
-		return 1;
-	}
+	PrepareAimData(beatmap);
+	PrepareTapData(beatmap);
+	FindPatterns(beatmap);
+	AnalyzePatterns(beatmap);
 	
-	extern "C" __declspec(dllexport) int CalculateBeatmapSkills(std::string filepath, int &circles, int &sliderspinners, int mods, Skills& skills, std::string &name, double &ar, double &cs)
+	if (beatmap.distances.size() == 0)
+		return 0;
+	cout << "Preprocessing " << beatmap.name << "... completed!" << endl << endl;
+	return 1;
+}
+
+void CalculateSkills(Beatmap &beatmap)
+{
+	CalculateReaction(beatmap, HasMod(beatmap, HD));
+	CalculateStamina(beatmap);
+	CalculateTenacity(beatmap);
+	bool agilityV2 = false;
+	if (agilityV2)
+		CalculateAgilityStrains(beatmap);  // calculates precision as well. Might seperate that later
+	else
+		CalculateAgility(beatmap);
+	CalculatePrecision(beatmap, HasMod(beatmap, HD));
+	CalculateAccuracy(beatmap);
+	if (HasMod(beatmap, FL))
+		CalculateMemory(beatmap);
+}
+
+void PrintResults(Beatmap &beatmap)
+{
+	cout << "* " << beatmap.name << beatmap.modsString << " *" << endl;
+	cout << "Stamina: " << beatmap.skills.stamina << endl;
+	cout << "Tenacity: " << beatmap.skills.tenacity << endl;
+	cout << "Agility: " << beatmap.skills.agility << endl;	
+	cout << "Accuracy: " << beatmap.skills.accuracy << endl;
+	cout << "Precision: " << beatmap.skills.precision << endl;
+	cout << "Reaction: " << beatmap.skills.reaction << endl;
+	cout << "Memory: " << beatmap.skills.memory << endl;
+}
+
+bool ProcessFile(std::string filepath)
+{
+	std::vector<std::string> tokens;
+	FileReader::tokenize(filepath, tokens, "\"");
+	int mods = 0;
+	if (tokens.size() >= 2 && tokens[2].length()) // there are some mods here probably!
 	{
-		// redirect cout to file
-		std::fstream output("log.txt", std::fstream::out | std::fstream::app);
-		std::streambuf *coutbuf = std::cout.rdbuf();
-		cout.rdbuf(output.rdbuf());
-
-		if(!FormulaVarsLoaded())
-			LoadFormulaVars();
-		Beatmap beatmap;
-
-		if (!ProcessFile(filepath, mods, beatmap))
+		std::vector<std::string> tokensMods;
+		FileReader::tokenize(tokens[2], tokensMods, " +");
+		if (tokensMods.size())
 		{
-			std::cout.rdbuf(coutbuf); // return to default
+			for (auto mod : tokensMods)
+			{
+				if (!mod.compare(0, mod.length(), "EZ"))
+					mods += EZ;
+				if (!mod.compare(0, mod.length(), "HT"))
+					mods += HT;
+				if (!mod.compare(0, mod.length(), "HR"))
+					mods += HR;
+				if (!mod.compare(0, mod.length(), "DT"))
+					mods += DT;
+				if (!mod.compare(0, mod.length(), "HD"))
+					mods += HD;
+				if (!mod.compare(0, mod.length(), "FL"))
+					mods += FL;
+			}
+		}
+	}
+
+	if(tokens.size() >= 2)
+		filepath = tokens[1];
+
+	std::ifstream beatmapFile(filepath);
+	if (beatmapFile.is_open())
+	{
+		cout << "Opened the beatmap " << filepath << endl;
+		Beatmap beatmap;
+		cout << "*** Parsing...";
+		if (!FileReader::ParseBeatmap(beatmapFile, beatmap))
+		{
+			cout << "\r*** Parsing... failed!" << endl << endl;
 			return 0;
 		}
+		cout << "\r*** Parsing... successful!" << endl << endl;
+		beatmapFile.close();
+		if (mods)
+		{
+			beatmap.modsString = tokens[2];
+			ApplyMods(beatmap, mods);
+		}
+		PreprocessMap(beatmap);
 		CalculateAimStrains(beatmap);
 		CalculateTapStrains(beatmap);
 		CalculateSkills(beatmap);
-		int circ = 0;
-		int slispi = beatmap.spinners;
-		for (auto &obj : beatmap.hitObjects)
-		{
-			if (IsHitObjectType(obj.type, HitObjectType::Normal))
-				circ++;
-			else if (IsHitObjectType(obj.type, HitObjectType::SLIDER))
-				slispi++;
-		}
-		circles = circ;
-		sliderspinners = slispi;
-		skills = beatmap.skills;
-		name = beatmap.name;
-		ar = beatmap.ar;
-		cs = beatmap.cs;
-		std::cout.rdbuf(coutbuf); // return to default
+		PrintResults(beatmap);
 		return 1;
 	}
+	else
+	{
+		cout << "Can't open " << filepath << endl;
+		return 0;
+	}
+}
+
+int main(int argc, char** argv)
+{
+	while (1)
+	{
+		LoadFormulaVars();
+		cout << "Paste (or drag'n'drop) a map or it's filepath to calculate skills" << endl;
+		cout << "If you want to add mods, map name must be inside \" 's" << endl;
+		cout << "Example: \"C:\\osu!\\Songs\\mymap.osu\" +HD +HR +FL" << endl;
+
+		std::string line;
+		getline(std::cin, line);
+		if (!line.length())
+			break;
+		cout << endl;
+		ProcessFile(line);
+		cout << endl;
+	}
+		
+	return 0;
 }
