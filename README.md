@@ -15,6 +15,7 @@ It uses external code: vector2d.h (irrlicht), INIReader.h, slider code from Tom9
 
 # Branches
 Main branch builds a .dll. Basically it's used to see if the code compiles correctly before compiling it for website itself or [osuSkillsGUI](https://github.com/Kert/osuSkillsGUI)
+
 For easier debugging you can use console_app branch (which builds an .exe file) where you can calculate skills for a single map
 
 # Contributing
