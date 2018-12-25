@@ -29,10 +29,11 @@ _ReSharper*/
 [Tt]est[Rr]esult*
 *.sdf
 *.db
+*.opendb
 
 #Extracted data
 *.txt
 
 #Other
 osuSkills.opensdf
-osuSkills.cfg
+config.cfg
