@@ -3,7 +3,6 @@
 #include "utils.h"
 #include "mods.h"
 #include "tweakvars.h"
-#include <iostream>
 
 double GetApproachRelativeSize(int time, int hitTime, double ar)
 {
