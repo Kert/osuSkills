@@ -33,7 +33,7 @@ void CalculateTapStrains(Beatmap &beatmap)
 				strain *= GetVar("Stamina", "DecayMax");
 			else
 			{
-				if (interval <= 1)
+				if (interval <= 15) // 1000 bpm 1/4
 				{
 					continue;
 				}
