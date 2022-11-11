@@ -72,8 +72,12 @@ void ResetFormulaVars()
 		
 	VARS["Memory"]["FollowpointsNerf"] = 0.8;
 	VARS["Memory"]["SliderBuff"] = 1.1;
-	VARS["Memory"]["TotalMult"] = 205;
+	VARS["Memory"]["TotalMult"] = 115;
 	VARS["Memory"]["TotalPow"] = 0.3;	
+	VARS["Memory"]["DistanceHiddenBuff"] = 1.15;
+	VARS["Memory"]["MaxHiddenApproachRateBuff"] = 0.2;
+	VARS["Memory"]["MediumCircleSizeRebalance"] = 36.49;
+	VARS["Memory"]["CircleSizeRebalanceFactor"] = 0.005;
 
 	VARS["Reaction"]["AvgWeighting"] = 0.7;
 	VARS["Reaction"]["PatternDamping"] = 0.15;
