@@ -175,6 +175,11 @@ namespace FileReader
 
 				std::vector<std::string> tokens;
 				tokenize(line, tokens, ",");
+				if(tokens.size() < 4)
+				{
+					cout << beatmap.name << " HitObjects line: not enough tokens!";
+					continue;
+				}
 				hitObject.pos.X = atof(tokens[0].c_str());
 				hitObject.pos.Y = atof(tokens[1].c_str());
 				hitObject.time  = atoi(tokens[2].c_str());
