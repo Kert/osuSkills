@@ -88,12 +88,12 @@ namespace osuSkills
 		return 1;
 	}
 	
-	extern "C" __declspec(dllexport) int CalculateBeatmapSkills(std::string filepath, int &circles, int &sliderspinners, int mods, Skills& skills, std::string &name, double &ar, double &cs)
+	extern "C" __declspec(dllexport) int CalculateBeatmapSkills(std::string filepath, int mods, Skills& skills)
 	{
 		// redirect cout to file
-		std::fstream output("log.txt", std::fstream::out | std::fstream::app);
-		std::streambuf *coutbuf = std::cout.rdbuf();
-		cout.rdbuf(output.rdbuf());
+		//std::fstream output("log.txt", std::fstream::out | std::fstream::app);
+		//std::streambuf *coutbuf = std::cout.rdbuf();
+		//cout.rdbuf(output.rdbuf());
 
 		if(!FormulaVarsLoaded())
 			LoadFormulaVars();
@@ -101,28 +101,14 @@ namespace osuSkills
 
 		if (!ProcessFile(filepath, mods, beatmap))
 		{
-			std::cout.rdbuf(coutbuf); // return to default
+			//std::cout.rdbuf(coutbuf); // return to default
 			return 0;
 		}
 		CalculateAimStrains(beatmap);
 		CalculateTapStrains(beatmap);
 		CalculateSkills(beatmap);
-		int circ = 0;
-		int slispi = beatmap.spinners;
-		for (auto &obj : beatmap.hitObjects)
-		{
-			if (IsHitObjectType(obj.type, HitObjectType::Normal))
-				circ++;
-			else if (IsHitObjectType(obj.type, HitObjectType::SLIDER))
-				slispi++;
-		}
-		circles = circ;
-		sliderspinners = slispi;
 		skills = beatmap.skills;
-		name = beatmap.name;
-		ar = beatmap.ar;
-		cs = beatmap.cs;
-		std::cout.rdbuf(coutbuf); // return to default
+		//std::cout.rdbuf(coutbuf); // return to default
 		return 1;
 	}
 }

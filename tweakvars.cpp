@@ -1,4 +1,4 @@
-#include <map>
+#include <unordered_map>
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -7,7 +7,7 @@
 std::string config = "config.cfg";
 static bool varsLoaded = false;
 // skill name / variable name / value
-static std::map<std::string, std::map<std::string, double>> VARS;
+static std::unordered_map<std::string, std::unordered_map<std::string, double>> VARS;
 
 using std::cout;
 using std::endl;
@@ -85,6 +85,7 @@ void ResetFormulaVars()
 // load tweakable variables used in formulas for strain calculation
 void LoadFormulaVars()
 {
+	varsLoaded = true;
 	// loading default variables
 	ResetFormulaVars();	
 	// If file exists
@@ -110,12 +111,11 @@ void LoadFormulaVars()
 		}
 	}
 	SaveFormulaVars();
-	varsLoaded = true;
 }
 
 double GetVar(std::string skill, std::string name)
 {
-	if (VARS.find(skill) == VARS.end())
+	/*if (VARS.find(skill) == VARS.end())
 	{
 		cout << "Algorithm variable loader: Wrong skill - " << skill << endl;
 		return 0;
@@ -128,10 +128,10 @@ double GetVar(std::string skill, std::string name)
 			return 0;
 		}
 		else
-		{
+		{*/
 			return VARS[skill][name];
-		}
-	}	
+	//	}
+	//}	
 }
 
 bool FormulaVarsLoaded()
