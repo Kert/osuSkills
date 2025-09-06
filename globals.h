@@ -2,6 +2,7 @@
 #define _globals_h_
 
 #include <map>
+#include <string>
 #include "vector2d.h"
 
 struct TIMING

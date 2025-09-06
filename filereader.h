@@ -159,8 +159,8 @@ namespace FileReader
 				
 				if (tPoint.offset == -1 || tPoint.meter == -1)
 				{
-					cout << beatmap.name << " Wrong timing point data!";
-					return 0;
+					cout << beatmap.name << " Wrong timing point data! offset " << tPoint.offset << " meter " << tPoint.meter;
+					tPoint.offset = 0;					
 				}
 				
 				bData.timingPoints.push_back(tPoint);
@@ -227,30 +227,27 @@ namespace FileReader
 					continue;
 				}
 			}
-			else if (!line.compare(0, 5, "Mode:"))
+			if (!line.compare(0, 5, "Mode:"))
 			{
 				int mode = atoi(line.substr(5, line.length()).c_str());
 				if (mode > 0)
+				{
+					cout << mode << " Wrong mode" << endl;
 					return 0;
-			}
-			else if (!line.compare(0, 17, "osu file format v"))
-			{
-				int format = atoi(line.substr(17, line.length()).c_str());
-				bData.format = format;
+				}
 			}
 		}
-		if (bData.format == -1)
-			cout << beatmap.name << "Warning: Wrong osu file format version!" << endl;
+		
+		bData.name = beatmap.artist + " - " + beatmap.title + " (" + beatmap.creator + ") [" + beatmap.version + "]";
+		
 		if (bData.hp == -1 || bData.cs == -1 || bData.od == -1 || bData.sm == -1 || bData.st == -1)
 		{
-			cout << beatmap.name << " Wrong file format!" << endl;
+			cout << bData.name << " Wrong file format!" << endl;
 			return 0;
 		}
 		if (bData.ar == -1)
 			bData.ar = bData.od;
-
 		beatmap = bData;
-		beatmap.name = beatmap.artist + " - " + beatmap.title + " (" + beatmap.creator + ") [" + beatmap.version + "]";
 		return 1;
 	}
 

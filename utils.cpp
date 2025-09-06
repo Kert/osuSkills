@@ -1,5 +1,6 @@
 #include "utils.h"
 #include <algorithm>
+#include <climits>
 
 bool BTWN(double lss, double val, double gtr)
 {

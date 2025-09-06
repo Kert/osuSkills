@@ -1,4 +1,6 @@
 #include "generic.h"
+
+#include <climits>
 #include "utils.h"
 #include "strains.h"
 #include "Slider.h"

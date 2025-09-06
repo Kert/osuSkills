@@ -8,23 +8,19 @@
 
 double CalculateAccuracy(Beatmap &beatmap)
 {
-	double circles = 0;
-
+	int Circles = 0;
 	for (auto &obj : beatmap.hitObjects)
 		if (IsHitObjectType(obj.type, HitObjectType::Normal))
-			circles++;
+			Circles++;
 
-	double od_ms = OD2ms(beatmap.od);
-
-	     if (HasMod(beatmap, MODS::DT)) od_ms /= 1.5;
-	else if (HasMod(beatmap, MODS::HT)) od_ms /= 0.75;
+	double Cert = 0.1;
+	double SS_UR = (5 * sqrt(2) * OD2ms(beatmap.od)) / erfInv((double)pow(Cert, (1 / (double)Circles)));
+	if (HasMod(beatmap, MODS::DT))
+		SS_UR /= 1.5;
+	else if(HasMod(beatmap, MODS::HT))
+		SS_UR /= 0.75;
+	beatmap.skills.accuracy = pow(beatmap.skills.stamina, GetVar("Accuracy", "VerScale")) / SS_UR;
+	beatmap.skills.accuracy = GetVar("Accuracy", "TotalMult") * pow(beatmap.skills.accuracy, GetVar("Accuracy", "TotalPow"));
 	
-	//std::cout << "circles = " << circles << "   od_ms: " << od_ms << "    stamina = " << beatmap.skills.stamina << "\n";
-
-	double tapping = 0;
-	if(beatmap.skills.stamina == 0) tapping = erf(INFINITY);
-	else                            tapping = erf(od_ms / (GetVar("Accuracy", "AccScale") * beatmap.skills.stamina * beatmap.skills.stamina));
-
-	beatmap.skills.accuracy = -GetVar("Accuracy", "VerScale")*circles*log(tapping);
 	return beatmap.skills.accuracy;
 }
