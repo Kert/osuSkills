@@ -63,6 +63,8 @@ void ResetFormulaVars()
 	
 	VARS["Accuracy"]["AccScale"] = 0.01;
 	VARS["Accuracy"]["VerScale"] = 0.30;
+	VARS["Accuracy"]["TotalMult"] = 23100;
+	VARS["Accuracy"]["TotalPow"] = 1.3;
 	
 	VARS["Precision"]["AgilityLimit"] = 700;
 	VARS["Precision"]["AgilityPow"] = 0.1;

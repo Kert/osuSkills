@@ -1,3 +1,4 @@
+#include <climits>
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -82,13 +83,13 @@ namespace osuSkills
 		}
 	}
 
-	extern "C" __declspec(dllexport) int ReloadFormulaVars()
+	extern "C" int ReloadFormulaVars()
 	{
 		LoadFormulaVars();
 		return 1;
 	}
 	
-	extern "C" __declspec(dllexport) int CalculateBeatmapSkills(std::string filepath, int mods, Skills& skills)
+	extern "C" int CalculateBeatmapSkills(std::string filepath, int mods, Skills& skills)
 	{
 		// redirect cout to file
 		//std::fstream output("log.txt", std::fstream::out | std::fstream::app);

@@ -90,7 +90,7 @@ Vector2d CircumscribedCircle::intersect(Vector2d a, Vector2d ta, Vector2d b, Vec
 	double des = tb.X * ta.Y - tb.Y * ta.X;
 	if (abs(des) < 0.00001)
 	{
-		std::cout << "Vectors are parallel." << std::endl;
+		//std::cout << "Vectors are parallel." << std::endl;
 		return Vector2d(-1, -1);
 	}
 	double u = ((b.Y - a.Y) * ta.X + (a.X - b.X) * ta.Y) / des;
