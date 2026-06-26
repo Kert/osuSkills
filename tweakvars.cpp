@@ -82,6 +82,11 @@ void ResetFormulaVars()
 	VARS["Reaction"]["FadeinPercent"] = 0.1;
 	VARS["Reaction"]["VerScale"] = 12.2;
 	VARS["Reaction"]["CurveExp"] = 0.64;
+
+	VARS["Reading"]["StrainDecay"] = 0.01;
+	VARS["Reading"]["Weighting"] = 0.78;
+	VARS["Reading"]["TotalMult"] = 1;
+	VARS["Reading"]["TotalPow"] = 1;
 }
 
 // load tweakable variables used in formulas for strain calculation

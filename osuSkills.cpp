@@ -58,6 +58,7 @@ void CalculateSkills(Beatmap &beatmap)
 	CalculateAccuracy(beatmap);
 	if (HasMod(beatmap, FL))
 		CalculateMemory(beatmap);
+	CalculateReading(beatmap, HasMod(beatmap, HD));
 }
 
 void PrintResults(Beatmap &beatmap)
@@ -69,6 +70,7 @@ void PrintResults(Beatmap &beatmap)
 	cout << "Accuracy: " << beatmap.skills.accuracy << endl;
 	cout << "Precision: " << beatmap.skills.precision << endl;
 	cout << "Reaction: " << beatmap.skills.reaction << endl;
+	cout << "Reading: " << beatmap.skills.reading << endl;
 	cout << "Memory: " << beatmap.skills.memory << endl;
 }
 

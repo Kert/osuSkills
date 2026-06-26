@@ -19,7 +19,7 @@ void CalculateMovementData(Beatmap &beatmap);
 void GatherTapPatterns(Beatmap &beatmap);
 Burst GetHardestBurst(Beatmap &beatmap);
 void GatherTargetPoints(Beatmap &beatmap);
-void GatherAimPoints(Beatmap &beatmap);
+void GatherAimAndReadingPoints(Beatmap &beatmap);
 void CalculateAngles(Beatmap &beatmap);
 void BakeSliderData(Beatmap &beatmap);
 

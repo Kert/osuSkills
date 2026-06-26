@@ -84,4 +84,8 @@ int sign(T x)
 	return (x > 0) - (x < 0);
 };
 
+double smootherstep(double x, double start, double end);
+double reverseLerp(double x, double start, double end);
+double norm(double p, const std::vector<double>& values);
+
 #endif

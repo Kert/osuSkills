@@ -398,3 +398,25 @@ double lerp(double a, double b, double t)
 {
 	return a * (1 - t) + b * t;
 }
+
+double smootherstep(double x, double start, double end)
+{
+	x = clamp((x - start) / (end - start), 0.0, 1.0);
+	return x * x * x * (x * (6.0 * x - 15.0) + 10.0);
+}
+
+double reverseLerp(double x, double start, double end)
+{
+	return clamp((x - start) / (end - start), 0.0, 1.0);
+}
+
+// Returns the p-norm of an n-dimensional vector
+double norm(double p, const std::vector<double>& values)
+{
+	double sum = 0.0;
+	for(double x : values)
+	{
+		sum += std::pow(x, p);
+	}
+	return std::pow(sum, 1.0 / p);
+}

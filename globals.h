@@ -110,6 +110,18 @@ struct AimPoint
 	AIM_POINT_TYPES type;
 };
 
+struct ReadingPoint
+{
+	int index;
+	int time;
+	int preempt;
+	int fadein; 
+	int fadeout;
+	double angle;
+	Vector2d pos;
+	double dist;
+};
+
 struct Skills
 {
 	double stamina = 0;
@@ -145,6 +157,7 @@ struct Beatmap
 	std::vector<TimingPoint> timingPoints;
 	std::vector<HitObject> hitObjects;
 	std::vector<AimPoint> aimPoints;
+	std::vector<ReadingPoint> readingPoints;
 	std::vector<TIMING> targetPoints;
 	int spinners = 0;
 
@@ -167,6 +180,7 @@ struct Beatmap
 	std::vector<double> angles;
 	std::vector<double> angleBonuses;
 	std::vector<int> reactionTimes;
+	std::vector<double> readingStrains;
 
 	// Tapping
 	std::vector<int> pressIntervals;
