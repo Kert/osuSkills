@@ -238,17 +238,17 @@ std::pair<int, int> getVisiblityTimes(HitObject &obj, double AR, bool hidden, do
 		// 70% to the time it the slider ends
 		if (IsHitObjectType(obj.type, SLIDER))
 		{
-			double fadeoutDuration = (obj.endTime - fadeinTimeEnd); // how long the fadeout period is
-			double fadeoutTimeEnd = fadeinTimeEnd + fadeoutDuration;		   // When it is fully faded out
-			times.second = (int) getValue(fadeinTimeEnd, fadeoutTimeEnd, 1.0 - opacityEnd);
+			double fadeoutDuration = 0.7*(obj.time - fadeinTimeEnd);		// how long the fadeout period is
+			double fadeoutTimeEnd = fadeinTimeEnd + fadeoutDuration;	// When it is fully faded out
+			times.second = (int)getValue(fadeinTimeEnd, fadeoutTimeEnd, 1.0 - opacityStart); // <-- no this is not a mistake :D
 
 			return times;
 		}
 		else
 		{
-			double fadeoutDuration = 0.7*(obj.time - fadeinTimeEnd);		// how long the fadeout period is
-			double fadeoutTimeEnd = fadeinTimeEnd + fadeoutDuration;	// When it is fully faded out
-			times.second = (int) getValue(fadeinTimeEnd, fadeoutTimeEnd, 1.0 - opacityStart); // <-- no this is not a mistake :D
+			double fadeoutDuration = (obj.endTime - fadeinTimeEnd); // how long the fadeout period is
+			double fadeoutTimeEnd = fadeinTimeEnd + fadeoutDuration;		   // When it is fully faded out
+			times.second = (int)getValue(fadeinTimeEnd, fadeoutTimeEnd, 1.0 - opacityEnd);
 
 			return times;
 		}
