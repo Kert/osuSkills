@@ -220,6 +220,45 @@ int getHitcircleAt(std::vector<HitObject> &hitcircles, int time)
 	return -1;
 }
 
+// returns start and end times of fadeOut
+std::pair<int, int> getFadeOutTimes(HitObject& obj, double AR, bool hidden)
+{
+	std::pair<int, int> times;
+	double preampTime = obj.time - AR2ms(AR);	// Time when the AR goes into effect
+	if (hidden)
+	{
+		double fadeinDuration = 0.4 * AR2ms(AR);			// how long the fadein period is
+		double fadeinTimeEnd = preampTime + fadeinDuration; // When it is fully faded in
+		times.first = (int)fadeinTimeEnd;
+
+		double fadeoutDuration;
+		// If it's a circle, then the fade out period lasts from when it's fadedin to
+		// 70% to the time of the AR window
+		if (IsHitObjectType(obj.type, SLIDER))
+			fadeoutDuration = (obj.endTime - fadeinTimeEnd);
+		else
+			fadeoutDuration = 0.3 * AR2ms(AR);
+		double fadeoutTimeEnd = fadeinTimeEnd + fadeoutDuration; // When it is fully faded out
+		times.second = (int)fadeoutTimeEnd;
+	}
+	else
+	{
+		double fadeinDuration = std::min(AR2ms(AR), 400);	// how long the fadein period is
+		double fadeinTimeEnd = preampTime + fadeinDuration; // When it is fully faded in
+
+		// Fadein period always lasts from preamp time to 400 ms after preamp time or
+		// when the object needs to be hit, which ever is smaller
+		times.first = (int)fadeinTimeEnd;
+
+		// If it is during the slider hold period, then it's fully visible.
+		// Otherwise, it's not visible anymore.
+		if (IsHitObjectType(obj.type, SLIDER))
+			times.second = obj.endTime;
+		else
+			times.second = obj.time;
+	}
+	return times;
+}
 
 std::pair<int, int> getVisiblityTimes(HitObject &obj, double AR, bool hidden, double opacityStart, double opacityEnd)
 {
@@ -238,17 +277,17 @@ std::pair<int, int> getVisiblityTimes(HitObject &obj, double AR, bool hidden, do
 		// 70% to the time it the slider ends
 		if (IsHitObjectType(obj.type, SLIDER))
 		{
-			double fadeoutDuration = 0.7*(obj.time - fadeinTimeEnd);		// how long the fadeout period is
-			double fadeoutTimeEnd = fadeinTimeEnd + fadeoutDuration;	// When it is fully faded out
-			times.second = (int)getValue(fadeinTimeEnd, fadeoutTimeEnd, 1.0 - opacityStart); // <-- no this is not a mistake :D
+			double fadeoutDuration = (obj.endTime - fadeinTimeEnd); // how long the fadeout period is
+			double fadeoutTimeEnd = fadeinTimeEnd + fadeoutDuration;		   // When it is fully faded out
+			times.second = (int)getValue(fadeinTimeEnd, fadeoutTimeEnd, 1.0 - opacityEnd);
 
 			return times;
 		}
 		else
 		{
-			double fadeoutDuration = (obj.endTime - fadeinTimeEnd); // how long the fadeout period is
-			double fadeoutTimeEnd = fadeinTimeEnd + fadeoutDuration;		   // When it is fully faded out
-			times.second = (int)getValue(fadeinTimeEnd, fadeoutTimeEnd, 1.0 - opacityEnd);
+			double fadeoutDuration = 0.7 * (obj.time - fadeinTimeEnd);		// how long the fadeout period is
+			double fadeoutTimeEnd = fadeinTimeEnd + fadeoutDuration;	// When it is fully faded out
+			times.second = (int)getValue(fadeinTimeEnd, fadeoutTimeEnd, 1.0 - opacityStart); // <-- no this is not a mistake :D
 
 			return times;
 		}

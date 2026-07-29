@@ -332,8 +332,8 @@ void GatherAimAndReadingPoints(Beatmap &beatmap)
 		if(IsHitObjectType(hitObj.type, HitObjectType::Normal))
 		{
 			beatmap.aimPoints.push_back({hitObj.time, hitObj.pos, AIM_POINT_CIRCLE});
-			std::pair<int, int> visTimes = getVisiblityTimes(hitObj, beatmap.ar, HasMod(beatmap, (MODS)beatmap.mods), 0.0, 1.0);
-			beatmap.readingPoints.push_back({ index, hitObj.time, hitObj.time - AR2ms(beatmap.ar), visTimes.first, visTimes.second, 0.0, hitObj.pos, hitObj.pos.getDistanceFrom(prev->pos) });
+			std::pair<int, int> visTimes = getFadeOutTimes(hitObj, beatmap.ar, HasMod(beatmap, HD));
+			beatmap.readingPoints.push_back({ index, hitObj.time, hitObj.time - AR2ms(beatmap.ar), visTimes.first, visTimes.second, 0.0, hitObj.pos, hitObj.pos.getDistanceFrom(prev->endPoint) });
 			index++;
 			prev = &hitObj;
 		}
@@ -342,8 +342,8 @@ void GatherAimAndReadingPoints(Beatmap &beatmap)
 			beatmap.aimPoints.push_back({hitObj.time, hitObj.pos, AIM_POINT_SLIDER});
 //			beatmap.aimPoints.push_back({GetRepeat(hitObj), hitObj.pos, AIM_POINT_SLIDERREVERSE});
 //			beatmap.aimPoints.push_back({hitObj.endTime, hitObj.endPoint, AIM_POINT_SLIDEREND});
-			std::pair<int, int> visTimes = getVisiblityTimes(hitObj, beatmap.ar, HasMod(beatmap, (MODS)beatmap.mods), 0.0, 1.0);
-			beatmap.readingPoints.push_back({index, hitObj.time, hitObj.time - AR2ms(beatmap.ar), visTimes.first, visTimes.second, 0.0, hitObj.pos, hitObj.pos.getDistanceFrom(prev->pos) });
+			std::pair<int, int> visTimes = getFadeOutTimes(hitObj, beatmap.ar, HasMod(beatmap, HD));
+			beatmap.readingPoints.push_back({index, hitObj.time, hitObj.time - AR2ms(beatmap.ar), visTimes.first, visTimes.second, 0.0, hitObj.pos, hitObj.pos.getDistanceFrom(prev->endPoint) });
 			index++;
 			prev = &hitObj;
 
@@ -354,7 +354,8 @@ void GatherAimAndReadingPoints(Beatmap &beatmap)
 			if(hitObj.ticks.size() || hitObj.pos.getDistanceFrom(endPos) > 2 * CS2px(beatmap.cs))
 			{
 				beatmap.aimPoints.push_back({ endTime, endPos, AIM_POINT_SLIDEREND });
-				beatmap.readingPoints.push_back({ index, endTime, endTime - AR2ms(beatmap.ar), visTimes.first, visTimes.second, 0.0, endPos, endPos.getDistanceFrom(prev->pos) });
+				int sliderEndOffset = endTime - hitObj.time;
+				beatmap.readingPoints.push_back({ index, endTime, endTime - AR2ms(beatmap.ar), visTimes.first + sliderEndOffset, visTimes.second + sliderEndOffset, 0.0, endPos, endPos.getDistanceFrom(hitObj.pos) });
 				index++;
 				prev = &hitObj;
 			}

@@ -115,8 +115,8 @@ struct ReadingPoint
 	int index;
 	int time;
 	int preempt;
-	int fadein; 
-	int fadeout;
+	int fadeinEnd;
+	int fadeoutEnd;
 	double angle;
 	Vector2d pos;
 	double dist;

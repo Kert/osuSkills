@@ -184,7 +184,7 @@ double getPastObjectDifficultyInfluence(std::vector<ReadingPoint> &points, Readi
 
 double GetOpacityAt(ReadingPoint &point, int time, double AR, bool hidden)
 {
-	if(time > point.time)
+	if(time > point.fadeoutEnd)
 	{
 		// Consider a ReadingPoint as being invisible when its start time is passed.
 		// In reality the ReadingPoint will be visible beyond its start time up until its hittable window has passed,
@@ -199,8 +199,8 @@ double GetOpacityAt(ReadingPoint &point, int time, double AR, bool hidden)
 	if(hidden)
 	{
 		fadeInDuration = 0.4 * AR2ms(AR);
-		double fadeOutStartTime = point.fadeout;
-		double fadeOutDuration = point.preempt * FADE_OUT_DURATION_MULTIPLIER;
+		double fadeOutStartTime = point.fadeinEnd;
+		double fadeOutDuration = point.fadeoutEnd - point.fadeinEnd;
 
 		return std::min(
 			clamp((time - fadeInStartTime) / fadeInDuration, 0.0, 1.0),
@@ -262,7 +262,6 @@ double calculateHiddenDifficulty(ReadingPoint &currObj, ReadingPoint &previous, 
 
 	// Higher preempt means that time spent invisible is higher too, we want to reward that
 	double preemptFactor = pow(currObj.time - currObj.preempt, 2.2) * 0.01;
-	preemptFactor = 1;
 
 	// Account for both past and current densities
 	double densityFactor = pow(currentVisibleObjectDensity + pastObjectDifficultyInfluence, 3.3) * 3;

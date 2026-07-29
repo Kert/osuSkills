@@ -22,7 +22,7 @@ std::vector<std::tuple<int, int, int, int>> getPattern(std::vector<HitObject> &o
 
 
 // --> hitobjects
-
+std::pair<int, int> getFadeOutTimes(HitObject& obj, double AR, bool hidden);
 std::pair<int, int> getVisiblityTimes(HitObject &obj, double AR, bool hidden, double opacityStart, double opacityEnd);
 
 double getVelocity(HitObject &obj);
